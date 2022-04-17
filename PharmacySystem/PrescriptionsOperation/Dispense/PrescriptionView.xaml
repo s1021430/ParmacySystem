@@ -1,0 +1,650 @@
+﻿<UserControl x:Class="PharmacySystem.PrescriptionsOperation.Dispense.PrescriptionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:medicalBaseClass="clr-namespace:GeneralClass.Prescription.MedicalBaseClass;assembly=GeneralClass"
+             xmlns:viewModel="clr-namespace:PharmacySystem.ViewModel"
+             xmlns:converters="clr-namespace:PharmacySystem.Converters"
+             xmlns:class="clr-namespace:PharmacySystem.Class"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:uiBehavior="clr-namespace:PharmacySystem.UIBehavior"
+             xmlns:customer="clr-namespace:GeneralClass.Customer;assembly=GeneralClass"
+             xmlns:view="clr-namespace:PharmacySystem.View"
+             xmlns:dispense="clr-namespace:PharmacySystem.PrescriptionsOperation.Dispense"
+             d:DataContext="{d:DesignInstance dispense:PrescriptionViewModel}" x:Name="PrescriptionUserControl"
+             mc:Ignorable="d" d:DesignWidth="1910" FontFamily="{StaticResource MaterialDesignFont}"
+             Unloaded="PrescriptionView_OnUnloaded">
+    <UserControl.Resources>
+        <converters:DoubleStringConverter x:Key="DoubleStringConverter" />
+        <converters:EqualityToVisibilityConverter x:Key="EqualityToVisibilityConverter" />
+        <converters:EqualsConverter x:Key="EqualsConverter" />
+        <converters:MedicalOrderFieldEnabledConverts x:Key="MedicalOrderFieldEnabledConverts" />
+        <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
+            <Setter Property="Height" Value="50" />
+            <Setter Property="FontSize" Value="{StaticResource NormalContentSize}" />
+            <Setter Property="TextAlignment" Value="Justify" />
+            <Setter Property="materialDesign:HintAssist.IsFloating" Value="True" />
+        </Style>
+        <Style TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignTextBlock}">
+            <Setter Property="Foreground" Value="{StaticResource TextForeground}" />
+            <Setter Property="FontSize" Value="{StaticResource NormalContentSize}" />
+        </Style>
+        <Style TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignFloatingHintComboBox}">
+            <Setter Property="Height" Value="50" />
+            <Setter Property="FontSize" Value="{StaticResource NormalContentSize}" />
+            <Style.Triggers>
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="IsDropDownOpen" Value="true" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="DatePicker" BasedOn="{StaticResource MaterialDesignDatePicker}">
+            <Setter Property="Height" Value="50" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="materialDesign:HintAssist.IsFloating" Value="True" />
+            <Setter Property="Template" Value="{StaticResource TaiwanDatePickerTemplate}" />
+        </Style>
+        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="5" />
+        </Style>
+    </UserControl.Resources>
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.4*" />
+            <ColumnDefinition Width="4*" />
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1.2*" />
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth3" UniformCornerRadius="10"
+                                 Background="White">
+                <Grid Background="White">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60" />
+                        <RowDefinition Height="60" />
+                        <RowDefinition Height="60" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBox materialDesign:HintAssist.Hint="姓名" Margin="10,0,0,0"
+                             Text="{Binding PrescriptionData.Patient.Name,UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter"
+                                        Command="{Binding GetCustomerCommand}"
+                                        CommandParameter="{x:Static customer:CustomerSearchCondition.Name}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
+                    <TextBox Grid.Row="0" Grid.Column="1" materialDesign:HintAssist.Hint="身分證字號"
+                             Text="{Binding PrescriptionData.Patient.IDNumber,UpdateSourceTrigger=PropertyChanged}"
+                             Margin="10,0,0,0">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding GetCustomerCommand}"
+                                        CommandParameter="{x:Static customer:CustomerSearchCondition.IDNumber}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
+                    <StackPanel Grid.Row="0" Grid.Column="2">
+                        <TextBlock Text="性別" Margin="10,0,10,0" FontSize="14" />
+                        <ItemsControl Margin="10,0,10,5">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <RadioButton GroupName="Genders" FontSize="20" Content="{x:Static customer:Gender.男}"
+                                         IsChecked="{Binding PrescriptionData.Patient.Gender,Converter={StaticResource EqualsConverter},ConverterParameter={x:Static customer:Gender.男}}" />
+                            <RadioButton GroupName="Genders" Content="{x:Static customer:Gender.女}" Margin="55,0,0,0"
+                                         IsChecked="{Binding PrescriptionData.Patient.Gender,Converter={StaticResource EqualsConverter},ConverterParameter={x:Static customer:Gender.女}}" />
+                        </ItemsControl>
+                    </StackPanel>
+                    <DatePicker Grid.Row="1" Grid.Column="0" materialDesign:HintAssist.Hint="生日" Margin="10,0,0,0"
+                                SelectedDate="{Binding PrescriptionData.Patient.Birthday}">
+                        <DatePicker.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding GetCustomerCommand}"
+                                        CommandParameter="{x:Static customer:CustomerSearchCondition.Birthday}" />
+                        </DatePicker.InputBindings>
+                    </DatePicker>
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="10,0,0,0" materialDesign:HintAssist.Hint="電話1"
+                             Text="{Binding PrescriptionData.Patient.FirstPhoneNumber,UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding GetCustomerCommand}"
+                                        CommandParameter="{x:Static customer:CustomerSearchCondition.FirstPhoneNumber}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
+                    <TextBox Grid.Row="1" Grid.Column="2" Margin="10,0,10,0" materialDesign:HintAssist.Hint="電話2"
+                             Text="{Binding PrescriptionData.Patient.SecondPhoneNumber,UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding GetCustomerCommand}"
+                                        CommandParameter="{x:Static customer:CustomerSearchCondition.SecondPhoneNumber}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
+                    <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="10,0,10,0"
+                             materialDesign:HintAssist.Hint="地址"
+                             TextAlignment="Left"
+                             Text="{Binding PrescriptionData.Patient.Address,UpdateSourceTrigger=PropertyChanged}" />
+                    <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,10,0,10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="60" />
+                        </Grid.RowDefinitions>
+                        <materialDesign:Card Background="Transparent" UniformCornerRadius="10" Margin="10,0,10,0">
+                            <Grid Background="{DynamicResource MahApps.Brushes.Gray9}">
+                                <RichTextBox Style="{StaticResource MaterialDesignRichTextBox}"
+                                             VerticalAlignment="Stretch" AcceptsReturn="True" FontSize="16"
+                                             VerticalScrollBarVisibility="Auto" BorderThickness="0"
+                                             Background="{DynamicResource MahApps.Brushes.Gray9}" Padding="5,5,0,0"
+                                             materialDesign:TextFieldAssist.UnderlineBrush="{DynamicResource MahApps.Brushes.Gray9}">
+                                    <FlowDocument>
+                                        <Paragraph>
+                                            <Run
+                                                Text="{Binding PrescriptionData.Patient.Note,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </Paragraph>
+                                    </FlowDocument>
+                                </RichTextBox>
+                            </Grid>
+                        </materialDesign:Card>
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right"
+                                    Margin="0,10,10,0">
+                            <Button Background="#FF14B458" Height="40" Content="讀卡"
+                                    Foreground="Snow" Width="100" FontSize="18" Command="{Binding ReadCardCommand}" />
+                            <Button Background="#FF4489FF" Height="40" Content="存檔"
+                                    Foreground="Snow" Width="100" FontSize="18" Margin="10,0,0,0" BorderThickness="0"
+                                    Command="{Binding SavePatientDataCommand}" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </materialDesign:Card>
+            <materialDesign:Card Grid.Row="1" materialDesign:ShadowAssist.ShadowDepth="Depth3" Background="White"
+                                 UniformCornerRadius="10"
+                                 Margin="0,10,0,20">
+                <DataGrid materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True" CanUserReorderColumns="False"
+                          CanUserResizeColumns="False">
+                    <DataGrid.Resources>
+                        <ContextMenu x:Key="RowMenu"
+                                     DataContext="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                     d:DataContext="{d:DesignInstance dispense:PrescriptionViewModel}">
+                            <MenuItem Header="複製" Command="{Binding CopyCommand}" />
+                            <MenuItem Header="補卡" Command="{Binding MakeUpCommand}" />
+                        </ContextMenu>
+                        <Style TargetType="{x:Type DataGridRow}">
+                            <Setter Property="ContextMenu" Value="{StaticResource RowMenu}" />
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Width="120">
+                            <DataGridTextColumn.Header>
+                                <TextBlock FontSize="16" Text="醫療院所" />
+                            </DataGridTextColumn.Header>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Width="100">
+                            <DataGridTextColumn.Header>
+                                <TextBlock FontSize="16" Text="科別" />
+                            </DataGridTextColumn.Header>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Width="62">
+                            <DataGridTextColumn.Header>
+                                <TextBlock FontSize="16" Text="卡序" />
+                            </DataGridTextColumn.Header>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Width="100">
+                            <DataGridTextColumn.Header>
+                                <TextBlock FontSize="16" Text="調劑日" />
+                            </DataGridTextColumn.Header>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Width="100">
+                            <DataGridTextColumn.Header>
+                                <TextBlock FontSize="16" Text="就醫日" />
+                            </DataGridTextColumn.Header>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </materialDesign:Card>
+        </Grid>
+        <Grid Grid.Column="1" Margin="10,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="150" />
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="75"/>
+                <RowDefinition Height="55"/>
+            </Grid.RowDefinitions>
+            <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth3" UniformCornerRadius="10">
+                <Grid Background="White">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="65" />
+                        <RowDefinition Height="65" />
+                        <RowDefinition Height="55" />
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="155" />
+                            <ColumnDefinition Width="170" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="145" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Margin="10,0,0,0"
+                                 Text="{Binding PrescriptionData.Institution.ID,UpdateSourceTrigger=PropertyChanged}"
+                                 materialDesign:HintAssist.Hint="院所代碼">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter"
+                                            CommandParameter="{x:Static medicalBaseClass:InstitutionSearchCondition.ID}"
+                                            Command="{Binding GetInstitutionCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <TextBox Grid.Column="1" Margin="10,0,0,0"
+                                 Text="{Binding PrescriptionData.Institution.Name,Mode=OneWay}"
+                                 materialDesign:HintAssist.Hint="院所名稱">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter"
+                                            Command="{Binding GetInstitutionCommand}"
+                                            CommandParameter="{x:Static medicalBaseClass:InstitutionSearchCondition.Name}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <ComboBox Grid.Column="2" x:Name="DivisionComboBox" Margin="10,0,0,0"
+                                  ItemsSource="{Binding Dispense.DivisionList,Source={StaticResource Locator}}"
+                                  materialDesign:HintAssist.Hint="科別"
+                                  SelectedItem="{Binding PrescriptionData.Division}"
+                                  uiBehavior:EnterKeyTraversal.IsEnabled="True"
+                                  ItemTemplate="{StaticResource MedicalValueItemTemplate}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction
+                                        Command="{Binding DataContext.DivisionChangedCommand,ElementName=PrescriptionUserControl}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                        <ComboBox Grid.Column="3" Margin="10,0,0,0"
+                                  SelectedItem="{Binding PrescriptionData.AdjustCase}"
+                                  materialDesign:HintAssist.Hint="調劑案件"
+                                  ItemsSource="{Binding Dispense.AdjustCaseList,Source={StaticResource Locator}}"
+                                  ItemTemplate="{StaticResource MedicalValueItemTemplate}"
+                                  uiBehavior:EnterKeyTraversal.IsEnabled="True">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction
+                                        Command="{Binding DataContext.AdjustCaseChangedCommand,ElementName=PrescriptionUserControl}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                        <TextBox Grid.Column="4" Margin="10,0,0,0" uiBehavior:EnterKeyTraversal.IsEnabled="True"
+                                 materialDesign:HintAssist.Hint="卡序" Text="{Binding PrescriptionData.MedicalSerialNum}" />
+                        <ComboBox Grid.Column="5" Margin="10,0,0,0"
+                                  SelectedItem="{Binding PrescriptionData.Pharmacist}"
+                                  uiBehavior:EnterKeyTraversal.IsEnabled="True"
+                                  materialDesign:HintAssist.Hint="調劑藥師"
+                                  ItemsSource="{Binding Dispense.PharmacistList,Source={StaticResource Locator}}"
+                                  DisplayMemberPath="Name" />
+                        <ComboBox Grid.Column="6" Margin="10,0,0,0"
+                                  ItemsSource="{Binding Dispense.CopaymentList,Source={StaticResource Locator}}"
+                                  materialDesign:HintAssist.Hint="部分負擔"
+                                  SelectedItem="{Binding PrescriptionData.Copayment}"
+                                  ItemTemplate="{StaticResource MedicalValueItemTemplate}"
+                                  uiBehavior:EnterKeyTraversal.IsEnabled="True">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction
+                                        Command="{Binding DataContext.AdjustCaseChangedCommand,ElementName=PrescriptionUserControl}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+                        <ComboBox Grid.Column="7" Margin="10,0,10,0" uiBehavior:EnterKeyTraversal.IsEnabled="True"
+                                  materialDesign:HintAssist.Hint="原處方案件"
+                                  ItemsSource="{Binding Dispense.PrescriptionCaseList,Source={StaticResource Locator}}"
+                                  SelectedItem="{Binding PrescriptionData.PrescriptionCase}"
+                                  ItemTemplate="{StaticResource MedicalValueItemTemplate}" />
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="160" />
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <DatePicker Width="140" materialDesign:HintAssist.Hint="調劑日"
+                                    uiBehavior:EnterKeyTraversal.IsEnabled="True"
+                                    Margin="10,0,0,0" SelectedDate="{Binding PrescriptionData.AdjustDate}" />
+                        <DatePicker Grid.Column="1" Width="140" materialDesign:HintAssist.Hint="就醫日"
+                                    uiBehavior:EnterKeyTraversal.IsEnabled="True"
+                                    Margin="10,0,0,0" SelectedDate="{Binding PrescriptionData.TreatDate}" />
+                        <TextBox Grid.Column="2" x:Name="MainDisease" Width="80" Margin="10,0,0,0"
+                                 materialDesign:HintAssist.Hint="主診斷" Tag="{Binding PrescriptionData.MainDisease}"
+                                 Text="{Binding PrescriptionData.MainDisease.ID.ID,Mode=OneWay}"
+                                 uiBehavior:EnterKeyTraversal.IsEnabled="False" Cursor="IBeam">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter"
+                                            Command="{Binding GetMainDiseaseCommand}"
+                                            CommandParameter="{Binding Text,ElementName=MainDisease}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <TextBox Grid.Column="3" Margin="5,0,0,0" Focusable="False"
+                                 materialDesign:HintAssist.Hint="診斷名稱" IsReadOnly="True"
+                                 Text="{Binding PrescriptionData.MainDisease.ChineseName}" />
+                        <TextBox Grid.Column="4" x:Name="SubDisease" Width="80" Margin="10,0,0,0"
+                                 Text="{Binding PrescriptionData.SubDisease.ID.ID,Mode=OneWay}"
+                                 materialDesign:HintAssist.Hint="副診斷" uiBehavior:EnterKeyTraversal.IsEnabled="False">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Return"
+                                            Command="{Binding GetSubDiseaseCommand}"
+                                            CommandParameter="{Binding Text,ElementName=SubDisease}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <TextBox Grid.Column="5" Margin="5,0,0,0" Focusable="False"
+                                 materialDesign:HintAssist.Hint="診斷名稱" IsReadOnly="True"
+                                 Text="{Binding PrescriptionData.SubDisease.ChineseName}" />
+                        <ComboBox Grid.Column="6" x:Name="PaymentCategoryComboBox" Margin="10,0,0,0"
+                                  materialDesign:HintAssist.Hint="給付類別" uiBehavior:EnterKeyTraversal.IsEnabled="True"
+                                  ItemsSource="{Binding Dispense.PaymentCategoryList,Source={StaticResource Locator}}"
+                                  SelectedItem="{Binding PrescriptionData.PaymentCategory}"
+                                  ItemTemplate="{StaticResource MedicalValueItemTemplate}" />
+                        <StackPanel Grid.Column="7" Orientation="Horizontal"
+                                    uiBehavior:EnterKeyTraversal.IsEnabled="True"
+                                    Visibility="{Binding PrescriptionData.AdjustCase.AdjustCaseID,
+                            Converter={StaticResource EqualityToVisibilityConverter},ConverterParameter='2'}">
+                            <TextBox Width="80" Margin="10,0,0,0" materialDesign:HintAssist.Hint="調劑次數"
+                                     Text="{Binding PrescriptionData.ChronicCurrentTimes}" />
+                            <TextBlock Margin="10,5,0,0"
+                                       Text="-" FontSize="30" TextAlignment="Center" VerticalAlignment="Center" />
+                            <TextBox Width="80" Margin="10,0,0,0" materialDesign:HintAssist.Hint="調劑序號"
+                                     Text="{Binding PrescriptionData.ChronicAvailableTimes}" />
+                        </StackPanel>
+                        <ComboBox Grid.Column="8" Margin="10,0,10,0"
+                                  ItemsSource="{Binding Dispense.SpecialTreatList,Source={StaticResource Locator}}"
+                                  materialDesign:HintAssist.Hint="特定治療"
+                                  SelectedItem="{Binding PrescriptionData.SpecialTreat}"
+                                  ItemTemplate="{StaticResource MedicalValueItemTemplate}"
+                                  uiBehavior:EnterKeyTraversal.IsEnabled="True" />
+                    </Grid>
+                </Grid>
+            </materialDesign:Card>
+            <materialDesign:Card Grid.Row="1" materialDesign:ShadowAssist.ShadowDepth="Depth3" Background="White"
+                                 UniformCornerRadius="10" Margin="0,10,0,0">
+                <DataGrid x:Name="MedicineDataGrid" materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True"
+                          AutoGenerateColumns="False" SelectedItem="{Binding SelectedMedicalOrder}"
+                          ItemsSource="{Binding PrescriptionData.MedicalOrders,UpdateSourceTrigger=PropertyChanged}"
+                          CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserAddRows="False"
+                          SelectedIndex="{Binding SelectedMedicineIndex}" >
+                    <DataGrid.Resources>
+                        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
+                            <Setter Property="FontSize" Value="16" />
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource MaterialDesignSelection}" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource MaterialDesignDataGridRowHoverBackground}" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Width="160">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="代碼" Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                               FontSize="{StaticResource NormalContentSize}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type class:MedicalOrderViewModel}">
+                                    <TextBox x:Name="MedicineIDTextBox"
+                                             Text="{Binding ID,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}">
+                                        <TextBox.InputBindings>
+                                            <KeyBinding Key="Enter"
+                                                        Command="{Binding DataContext.SearchMedicineCommand,ElementName=PrescriptionUserControl}"
+                                                        CommandParameter="{Binding Text, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=TextBox}}" />
+                                        </TextBox.InputBindings>
+                                    </TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="445">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="名稱" Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                               FontSize="{StaticResource NormalContentSize}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type class:MedicalOrderViewModel}">
+                                    <TextBlock Text="{Binding FullName}" FontSize="16"
+                                               ToolTip="{Binding FullName}" VerticalAlignment="Center" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="70">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="用量" Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                               FontSize="{StaticResource NormalContentSize}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type class:MedicalOrderViewModel}">
+                                    <TextBox x:Name="DosageTextBox"
+                                             Text="{Binding Dosage,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                             CharacterCasing="Upper"
+                                             InputMethod.IsInputMethodEnabled="False" Tag="3"
+                                             PreviewKeyDown="MedicineDataGridFocusNext"
+                                             IsEnabled="{Binding Converter={StaticResource MedicalOrderFieldEnabledConverts}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="100">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="用法" Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                               FontSize="{StaticResource NormalContentSize}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type class:MedicalOrderViewModel}">
+                                    <TextBox Text="{Binding Frequency,Mode=TwoWay,UpdateSourceTrigger=LostFocus}"
+                                             CharacterCasing="Upper"
+                                             Tag="4" InputMethod.IsInputMethodEnabled="False"
+                                             PreviewKeyDown="MedicineDataGridFocusNext"
+                                             IsEnabled="{Binding Converter={StaticResource MedicalOrderFieldEnabledConverts}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="75">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="天數" Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                               FontSize="{StaticResource NormalContentSize}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type class:MedicalOrderViewModel}">
+                                    <TextBox Text="{Binding Days,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                             Tag="5" InputMethod.IsInputMethodEnabled="False"
+                                             PreviewKeyDown="MedicineDataGridFocusNext"
+                                             IsEnabled="{Binding Converter={StaticResource MedicalOrderFieldEnabledConverts}}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="TextChanged">
+                                                <i:InvokeCommandAction
+                                                    Command="{Binding DataContext.MedicineDaysChangedCommand,ElementName=PrescriptionUserControl}" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="100">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="途徑" FontSize="{StaticResource NormalContentSize}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type class:MedicalOrderViewModel}">
+                                    <TextBox Text="{Binding ActionSite,Mode=TwoWay,UpdateSourceTrigger=LostFocus}"
+                                             CharacterCasing="Upper"
+                                             Tag="6" InputMethod.IsInputMethodEnabled="False"
+                                             PreviewKeyDown="MedicineDataGridFocusNext"
+                                             IsEnabled="{Binding Converter={StaticResource MedicalOrderFieldEnabledConverts}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="100">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="總量" Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                               FontSize="{StaticResource NormalContentSize}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type class:MedicalOrderViewModel}">
+                                    <TextBox Tag="7" InputMethod.IsInputMethodEnabled="False"
+                                             PreviewKeyDown="MedicineDataGridFocusNext"
+                                             Text="{Binding TotalAmount,Mode=TwoWay,UpdateSourceTrigger=LostFocus}"
+                                             IsEnabled="{Binding Converter={StaticResource MedicalOrderFieldEnabledConverts}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="70">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="自費" Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                               FontSize="{StaticResource NormalContentSize}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type class:MedicalOrderViewModel}">
+                                    <CheckBox
+                                        IsChecked="{Binding OwnExpense,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                        PreviewKeyDown="MedicineDataGridFocusNext"
+                                        Tag="8" Style="{StaticResource MaterialDesignCheckBox}"
+                                        HorizontalAlignment="Center"
+                                        IsEnabled="{Binding Converter={StaticResource MedicalOrderFieldEnabledConverts}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="70">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="單價" Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                               FontSize="{StaticResource NormalContentSize}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type class:MedicalOrderViewModel}">
+                                    <TextBox Text="{Binding UnitPrice,Mode=TwoWay,UpdateSourceTrigger=LostFocus}"
+                                             InputMethod.IsInputMethodEnabled="False"
+                                             Tag="0" PreviewKeyDown="MedicineDataGridFocusNext"
+                                             IsEnabled="{Binding Converter={StaticResource MedicalOrderFieldEnabledConverts}}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="100">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="總價" Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                               FontSize="{StaticResource NormalContentSize}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type class:MedicalOrderViewModel}">
+                                    <TextBlock Text="{Binding TotalPoint, NotifyOnTargetUpdated=True}"
+                                               Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                               FontSize="16" VerticalAlignment="Center">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="TargetUpdated">
+                                                <i:InvokeCommandAction
+                                                    Command="{Binding DataContext.RecalculatePointCommand,ElementName=PrescriptionUserControl}" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Width="100" Binding="{Binding Inventory}" FontSize="16" IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="{x:Type TextBlock}"
+                                       BasedOn="{StaticResource MaterialDesignDataGridTextColumnStyle}">
+                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                            <DataGridTextColumn.Header>
+                                <TextBlock Text="庫存" Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                           FontSize="{StaticResource NormalContentSize}" />
+                            </DataGridTextColumn.Header>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </materialDesign:Card>
+            <materialDesign:Card Grid.Row="2" materialDesign:ShadowAssist.ShadowDepth="Depth3"
+                                 Background="White" UniformCornerRadius="10" Margin="0,10">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right"
+                            Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="藥品 :" FontSize="18" />
+                        <TextBlock Text="{Binding PrescriptionData.MedicinePoint}" Width="50" FontSize="18"
+                                   Margin="5,0,0,0" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                        <TextBlock Text="特材 :" FontSize="18" />
+                        <TextBlock Text="{Binding PrescriptionData.SpecialMaterialPoint}" FontSize="18" Width="50"
+                                   Margin="5,0,0,0" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                        <TextBlock Text="部分負擔 :" FontSize="18" />
+                        <TextBlock Text="{Binding PrescriptionData.CopaymentPoint}" FontSize="18" Width="30"
+                                   Margin="5,0,0,0" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                        <TextBlock Text="自費 :" FontSize="18" />
+                        <TextBox
+                            Text="{Binding PrescriptionData.MedicineSelfPayAmount,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                            FontSize="18" Margin="5,0,0,0" Padding="0,1,0,0" Height="25" Width="80"
+                            Style="{StaticResource MaterialDesignTextBox}"
+                            uiBehavior:EnterKeyTraversal.IsEnabled="True" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                        <TextBlock Text="應收 :" FontSize="18" />
+                        <TextBlock
+                            Text="{Binding PrescriptionData.AmountReceivable,UpdateSourceTrigger=PropertyChanged}"
+                            FontSize="18" Width="80" Margin="5,0,0,0" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                        <TextBlock Text="付款 :" FontSize="18" />
+                        <TextBox
+                            Text="{Binding PrescriptionData.PaymentAmount,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource DoubleStringConverter}}"
+                            FontSize="18" Margin="5,0,0,0" Padding="0,1,0,0"
+                            Width="80" Height="25" Style="{StaticResource MaterialDesignTextBox}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                        <TextBlock Text="找零 :" FontSize="18" />
+                        <TextBlock Text="{Binding PrescriptionData.Change}" FontSize="18" Margin="5,0,0,0" Width="80" />
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:Card>
+            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
+                <Button Background="#FFF76262" Height="40" Content="異常上傳"
+                        Foreground="Snow" Width="120" FontSize="18" BorderThickness="0" />
+                <Button Command="{Binding PrescriptionRegisterCommand}" Background="#FF4489FF" Height="40" Content="登錄"
+                        Foreground="Snow" Width="100" FontSize="18" Margin="10,0,0,0" BorderThickness="0" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

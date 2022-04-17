@@ -1,0 +1,191 @@
+﻿<UserControl x:Class="PharmacySystem.PrescriptionsOperation.Search.PrescriptionSearchView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:medicalBaseClass="clr-namespace:GeneralClass.Prescription.MedicalBaseClass;assembly=GeneralClass"
+             xmlns:viewModel="clr-namespace:PharmacySystem.ViewModel"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:class="clr-namespace:PharmacySystem.Class"
+             xmlns:prescription="clr-namespace:GeneralClass.Prescription;assembly=GeneralClass"
+             xmlns:search="clr-namespace:PharmacySystem.PrescriptionsOperation.Search"
+             d:DataContext="{d:DesignInstance search:PrescriptionSearchViewModel}"
+             mc:Ignorable="d" Background="{StaticResource BaseBackground}" 
+             d:DesignWidth="1918" d:DesignHeight="900" x:Name="PrescriptionSearch">
+    <UserControl.Resources>
+        <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
+            <Setter Property="Height" Value="55"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="materialDesign:HintAssist.IsFloating" Value="True"/>
+        </Style>
+        <Style TargetType="DatePicker" BasedOn="{StaticResource MaterialDesignDatePicker}">
+            <Setter Property="Height" Value="55"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="materialDesign:HintAssist.IsFloating" Value="True"/>
+            <Setter Property="Template" Value="{StaticResource TaiwanDatePickerTemplate}"/>
+        </Style>
+        <Style TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignFloatingHintComboBox}">
+            <Setter Property="Height" Value="55"/>
+            <Setter Property="FontSize" Value="18"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid Height="{Binding RelativeSource={RelativeSource AncestorType=UserControl}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="75"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <materialDesign:Card Margin="10,10,10,0" UniformCornerRadius="10" materialDesign:ShadowAssist.ShadowDepth="Depth3">
+            <Grid Background="White">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="120"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <DatePicker Width="140" materialDesign:HintAssist.Hint="調劑日(起)" Margin="10,0,0,10" SelectedDate="{Binding Path=StartDate}"/>
+                    <DatePicker Width="140" materialDesign:HintAssist.Hint="調劑日(迄)" Margin="10,0,0,10" SelectedDate="{Binding Path=EndDate}"/>
+                    <TextBox Width="115" Margin="10,0,0,10" materialDesign:HintAssist.Hint="院所代碼" 
+                                 Text="{Binding Institution.ID,UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding GetInstitutionCommand}"
+                                        CommandParameter="{x:Static medicalBaseClass:InstitutionSearchCondition.ID}"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
+                    <TextBox Width="250" Margin="10,0,0,10" materialDesign:HintAssist.Hint="院所名稱"
+                                 Text="{Binding Institution.Name,UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding GetInstitutionCommand}"
+                                        CommandParameter="{x:Static medicalBaseClass:InstitutionSearchCondition.Name}"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
+                    <ComboBox Width="155" Margin="10,0,0,10" materialDesign:HintAssist.Hint="調劑案件" 
+                              ItemsSource="{Binding AdjustCaseList}"
+                              ItemTemplate="{StaticResource MedicalValueItemTemplate}"
+                              SelectedItem="{Binding AdjustCase}"/>
+                    <ComboBox Width="135" Margin="10,0,0,10" ItemsSource="{Binding PharmacistList}"
+                              materialDesign:HintAssist.Hint="調劑藥師" SelectedItem="{Binding Pharmacist}"
+                              DisplayMemberPath="Name"/>
+                    <TextBox Width="135" materialDesign:HintAssist.Hint="姓名" Margin="10,0,0,10"
+                             Text="{Binding PatientName,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Width="135" materialDesign:HintAssist.Hint="身分證字號" Margin="10,0,0,10"
+                             Text="{Binding PatientIdNumber,UpdateSourceTrigger=PropertyChanged}"/>
+                    <DatePicker Width="135" materialDesign:HintAssist.Hint="生日" Margin="10,0,0,10" 
+                                SelectedDate="{Binding Path=PatientBirthday,UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+                <Button Grid.Column="1" Background="#FF4489FF" Height="40" Content="查詢" HorizontalAlignment="Right" VerticalAlignment="Center" BorderThickness="0"
+                        Foreground="Snow" Width="100" FontSize="18" Margin="0,0,10,0" Command="{Binding SearchCommand}"
+                        Style="{StaticResource MaterialDesignRaisedAccentButton}"/>
+            </Grid>
+        </materialDesign:Card>
+        <materialDesign:Card Grid.Row="1" Margin="10" UniformCornerRadius="10" materialDesign:ShadowAssist.ShadowDepth="Depth3">
+            <Grid Background="White" Height="{Binding Height, ElementName=PrescriptionsGrid}">
+                <ListView FontSize="16" FontWeight="Regular"
+                    ItemsSource="{Binding PrescriptionsList}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                    ScrollViewer.CanContentScroll="true"
+                    VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"
+                    SelectedItem="{Binding SelectedRecord,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                    FontFamily="{materialDesign:MaterialDesignFont}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding DataContext.OpenPrescriptionCommand,ElementName=PrescriptionSearch}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Width="120">
+                                <GridViewColumnHeader TextElement.FontSize="18" Content="姓名" Style="{StaticResource MahApps.Styles.GridViewColumnHeader}" Padding="10,5,10,5"/>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type prescription:PrescriptionRecord}">
+                                        <TextBlock Text="{Binding PatientName}" FontSize="18" Padding="5,0,0,0"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Width="120">
+                                <GridViewColumnHeader TextElement.FontSize="18" Content="生日"/>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type prescription:PrescriptionRecord}">
+                                        <TextBlock Text="{class:CultureAwareBinding Path=PatientBirthday,Converter={StaticResource TaiwanCalendarConverter}}" FontSize="18"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Width="120">
+                                <GridViewColumnHeader TextElement.FontSize="18" Content="身分證字號"/>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type prescription:PrescriptionRecord}">
+                                        <TextBlock Text="{Binding PatientIdNumber}" FontSize="18"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Width="400">
+                                <GridViewColumnHeader TextElement.FontSize="18" Content="醫療院所"/>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type prescription:PrescriptionRecord}">
+                                        <TextBlock Text="{Binding Institution}" FontSize="18"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Width="150">
+                                <GridViewColumnHeader TextElement.FontSize="18" Content="科別"/>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type prescription:PrescriptionRecord}">
+                                        <TextBlock Text="{Binding Division.Name}" FontSize="18"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Width="90">
+                                <GridViewColumnHeader TextElement.FontSize="18" Content="卡序"/>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type prescription:PrescriptionRecord}">
+                                        <TextBlock Text="{Binding MedicalSerialNum}" FontSize="18"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Width="100">
+                                <GridViewColumnHeader TextElement.FontSize="18" Content="就醫日"/>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type prescription:PrescriptionRecord}">
+                                        <TextBlock Text="{class:CultureAwareBinding Path=TreatDate
+                                            ,Converter={StaticResource TaiwanCalendarConverter}}" FontSize="18"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Width="100">
+                                <GridViewColumnHeader TextElement.FontSize="18" Content="調劑日"/>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type prescription:PrescriptionRecord}">
+                                        <TextBlock Text="{class:CultureAwareBinding Path=AdjustDate
+                                            ,Converter={StaticResource TaiwanCalendarConverter}}" FontSize="18"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Width="150">
+                                <GridViewColumnHeader TextElement.FontSize="18" Content="調劑案件"/>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type prescription:PrescriptionRecord}">
+                                        <TextBlock Text="{Binding AdjustCase.Name}" FontSize="18"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Width="80">
+                                <GridViewColumnHeader TextElement.FontSize="18" Content="藥師"/>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type prescription:PrescriptionRecord}">
+                                        <TextBlock Text="{Binding Pharmacist}" FontSize="18"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+        </materialDesign:Card>
+    </Grid>
+</UserControl>

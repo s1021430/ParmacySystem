@@ -1,0 +1,27 @@
+﻿<Window x:Class="PharmacySystem.InitialSettingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PharmacySystem"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="初始化設定" Height="300" Width="400">
+    <Grid>
+        <Grid.RowDefinitions> 
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="130"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="IP:" FontSize="30" VerticalAlignment="Center"/>
+        <TextBox VerticalAlignment="Center" x:Name="txt_IP" Grid.Column="1"/>
+        <TextBlock Grid.Row="1" Text="機構代碼:" FontSize="30" VerticalAlignment="Center"/>
+        <TextBox VerticalAlignment="Center" x:Name="txt_Code" Grid.Row="1" Grid.Column="1"/>
+        <Button x:Name="btn_Register" Click="Btn_Register_Click" Grid.Row="3" Grid.Column="1" Content="註冊" Margin="5"/>
+    </Grid>
+</Window>

@@ -1,0 +1,297 @@
+﻿<UserControl x:Class="PharmacySystem.PrescriptionsOperation.Declare.PrescriptionDeclareView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PharmacySystem.View"
+             xmlns:converters="clr-namespace:PharmacySystem.Converters"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewModel="clr-namespace:PharmacySystem.ViewModel"
+             xmlns:prescriptionViewModel="clr-namespace:PharmacySystem.Class.PrescriptionViewModel"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:class="clr-namespace:PharmacySystem.Class"
+             xmlns:declare="clr-namespace:PharmacySystem.PrescriptionsOperation.Declare"
+             Background="{StaticResource BaseBackground}"
+             d:DataContext="{d:DesignInstance declare:PrescriptionDeclareViewModel}"
+             mc:Ignorable="d" d:DesignWidth="1910" d:DesignHeight="920" FontFamily="{StaticResource MaterialDesignFont}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:TaiwanCalendarYearConverter x:Key="TaiwanCalendarYearConverter"/>
+            <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
+                <Setter Property="Height" Value="50"/>
+                <Setter Property="FontSize" Value="17"/>
+                <Setter Property="TextAlignment" Value="Justify"/>
+                <Setter Property="materialDesign:HintAssist.IsFloating" Value="True"/>
+            </Style>
+            <Style TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignTextBlock}">
+                <Setter Property="Foreground" Value="{StaticResource TextForeground}"/>
+            </Style>
+            <Style TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignFloatingHintComboBox}">
+                <Setter Property="Height" Value="50"/>
+                <Setter Property="FontSize" Value="18"/>
+                <Style.Triggers>
+                    <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                        <Setter Property="IsDropDownOpen" Value="true" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="DatePicker" BasedOn="{StaticResource MaterialDesignDatePicker}">
+                <Setter Property="Height" Value="50"/>
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="materialDesign:HintAssist.IsFloating" Value="True"/>
+                <Setter Property="Template" Value="{StaticResource TaiwanDatePickerTemplate}"/>
+            </Style>
+            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="5"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Margin="5,10,5,5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="480"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <materialDesign:Card materialDesign:ShadowAssist.ShadowDepth="Depth3" UniformCornerRadius="10" Background="White" Margin="10,10,0,10">
+            <Grid Background="White">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="55"/>
+                    <RowDefinition Height="55"/>
+                    <RowDefinition Height="55"/>
+                    <RowDefinition Height="55"/>
+                    <RowDefinition Height="55"/>
+                    <RowDefinition Height="55"/>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" Margin="10,0,10,10">
+                    <ComboBox Width="100" ItemsSource="{Binding DeclareYears}" SelectedItem="{Binding SelectedYear}" HorizontalContentAlignment="Center">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource TaiwanCalendarYearConverter}}" FontSize="20"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <TextBlock Text="年" FontSize="22" VerticalAlignment="Bottom" Margin="10,0,10,0"/>
+                    <ComboBox Width="100" ItemsSource="{Binding DeclareMonths}" SelectedItem="{Binding SelectedMonth}" HorizontalContentAlignment="Center">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" FontSize="20"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <TextBlock Text="月 申報檔" FontSize="22" VerticalAlignment="Bottom" Margin="10,0,10,0"/>
+                    <Button Command="{Binding GetDeclarePrescriptionsCommand}"  Background="#FF4489FF" Height="40" 
+                            Foreground="Snow" BorderThickness="0" Width="60" Margin="10,20,0,0" BorderBrush="{x:Null}">
+                        <iconPacks:PackIconMaterial VerticalAlignment="Center" Kind="DownloadCircle" Width="25" Height="25"/>
+                    </Button>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10" DataContext="{Binding Summary}">
+                    <TextBlock Text="一般處方 : " FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBlock Text="{Binding NormalCount}" FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBlock Text="件" FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10" DataContext="{Binding Summary}">
+                    <TextBlock Text="日劑藥費 : " FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBlock Text="{Binding DayPayCount}" FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBlock Text="件" FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="10" DataContext="{Binding Summary}">
+                    <TextBlock Text="慢箋 : " FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBlock Text="{Binding ChronicCount}" FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBlock Text="件" FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                </StackPanel>
+                <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="10" DataContext="{Binding Summary}">
+                    <TextBlock Text="申請點數 : " FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBlock Text="{Binding DeclarePoint}" FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                </StackPanel>
+                <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="10" DataContext="{Binding Summary}">
+                    <TextBlock Text="部分負擔 : " FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBlock Text="{Binding CopaymentPoint}" FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                </StackPanel>
+                <StackPanel Grid.Row="6" Orientation="Horizontal" Margin="10" DataContext="{Binding Summary}">
+                    <TextBlock Text="總點數 : " FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBlock Text="{Binding TotalPoint}" FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                </StackPanel>
+            </Grid>
+        </materialDesign:Card>
+        <Grid Grid.Column="1" Margin="10,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <materialDesign:Card Grid.Row="0" materialDesign:ShadowAssist.ShadowDepth="Depth3" 
+                                 Background="White" UniformCornerRadius="10" Margin="0,10,10,10">
+                <DataGrid materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True" AutoGenerateColumns="False" SelectedItem="{Binding SelectedDeclareData}"
+                          ItemsSource="{Binding DeclarePrescriptions,UpdateSourceTrigger=PropertyChanged}" CanUserReorderColumns="False" 
+                          CanUserResizeColumns="False" CanUserAddRows="False">
+                    <DataGrid.Resources>
+                        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
+                            <Setter Property="FontSize" Value="16"/>
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource MaterialDesignSelection}" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource MaterialDesignDataGridRowHoverBackground}" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Width="55">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type prescriptionViewModel:PrescriptionDeclareDataViewModel}">
+                                    <CheckBox IsChecked="{Binding Declare,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="120">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="姓名" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type prescriptionViewModel:PrescriptionDeclareDataViewModel}">
+                                    <TextBlock Text="{Binding Patient.Name}" FontSize="18"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="105">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="生日" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type prescriptionViewModel:PrescriptionDeclareDataViewModel}">
+                                    <TextBlock Text="{class:CultureAwareBinding Path=Patient.Birthday,Converter={StaticResource TaiwanCalendarConverter}}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="110">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="調劑案件" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type prescriptionViewModel:PrescriptionDeclareDataViewModel}">
+                                    <TextBlock Text="{Binding AdjustCase.Name}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="Auto" MaxWidth="350">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="醫療院所" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type prescriptionViewModel:PrescriptionDeclareDataViewModel}">
+                                    <TextBlock Text="{Binding Institution.Name}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="120">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="科別" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type prescriptionViewModel:PrescriptionDeclareDataViewModel}">
+                                    <TextBlock Text="{Binding Division.Name}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="115">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="就醫日" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type prescriptionViewModel:PrescriptionDeclareDataViewModel}">
+                                    <TextBlock Text="{class:CultureAwareBinding Path=TreatDate,Converter={StaticResource TaiwanCalendarConverter}}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="115">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="調劑日" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type prescriptionViewModel:PrescriptionDeclareDataViewModel}">
+                                    <TextBlock Text="{class:CultureAwareBinding Path=AdjustDate,Converter={StaticResource TaiwanCalendarConverter}}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="120">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="調劑藥師" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type prescriptionViewModel:PrescriptionDeclareDataViewModel}">
+                                    <TextBlock Text="{Binding Pharmacist.Name}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="100">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="藥服費" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type prescriptionViewModel:PrescriptionDeclareDataViewModel}">
+                                    <TextBlock Text="{Binding MedicalServicePoint}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="120">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="申請點數" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type prescriptionViewModel:PrescriptionDeclareDataViewModel}">
+                                    <TextBlock Text="{Binding DeclarePoint}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="120">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="總點數" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type prescriptionViewModel:PrescriptionDeclareDataViewModel}">
+                                    <TextBlock Text="{Binding TotalPoint}" FontSize="17"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </materialDesign:Card>
+            <Button Command="{Binding CreateDeclareFileCommand}"  Background="#FF4489FF" Height="40" Margin="0,0,10,10" 
+                    Foreground="Snow" Width="130" FontSize="18" Grid.Row="1" HorizontalAlignment="Right" BorderThickness="0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <iconPacks:PackIconMaterial VerticalAlignment="Center" Kind="FileDocument" Width="25" Height="25"/>
+                    <TextBlock Text="製作檔案" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontSize="16" TextAlignment="Center" Margin="5,3,0,0"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl>

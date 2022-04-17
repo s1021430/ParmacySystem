@@ -1,0 +1,182 @@
+<UserControl x:Class="PharmacySystem.UserControl.FeaturesBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:featuresBar="clr-namespace:PharmacySystem.Class.Features"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance {x:Type featuresBar:FeaturesBarViewModel}}"
+             d:DesignHeight="55" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <featuresBar:FeaturesBarViewModel/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <ControlTemplate x:Key="MenuHeader" TargetType="{x:Type MenuItem}">
+            <Border x:Name="border" Background="Transparent" Height="{TemplateBinding Height}" Opacity="1">
+                <StackPanel VerticalAlignment="Center" Margin="{TemplateBinding Margin}" Orientation="Horizontal">
+                    <Image x:Name="PART_Icon" Source="/Images/Folder.png" Width="28" Height="28" />
+                    <ContentPresenter x:Name="txtHeader" Margin="3,1,5,1" MinWidth="90"
+                                      RecognizesAccessKey="True" VerticalAlignment="Center" ContentSource="Header"/>
+                    <Popup x:Name="SubMenuPopup" AllowsTransparency="true" IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" 
+                           Placement="Bottom"  Focusable="false" VerticalOffset="0"
+                           PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
+                        <Border Background="{TemplateBinding Background}"  CornerRadius="0" Margin="0,5"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <materialDesign:Card Background="White" materialDesign:ShadowAssist.Darken="True" UniformCornerRadius="0" materialDesign:ShadowAssist.ShadowDepth="Depth2">
+                                <StackPanel Margin="0" IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                            </materialDesign:Card >
+                        </Border>
+                    </Popup>
+                </StackPanel>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Role" Value="TopLevelHeader">
+                    <Setter Property="Margin" Value="5,1,1,1" TargetName="PART_Icon"/>
+                    <Setter Property="Margin" Value="1,1,6,1" TargetName="txtHeader"/>
+                    <Setter Property="MinWidth" Value="10" TargetName="txtHeader"/>
+                </Trigger>
+                <Trigger Property="Role" Value="TopLevelItem">
+                    <Setter Property="Margin" Value="5,1,1,1" TargetName="PART_Icon"/>
+                    <Setter Property="Margin" Value="1,1,6,1" TargetName="txtHeader"/>
+                    <Setter Property="MinWidth" Value="10" TargetName="txtHeader"/>
+                </Trigger>
+                <Trigger Property="Role" Value="SubmenuHeader">
+                    <Setter Property="Placement" Value="Right" TargetName="SubMenuPopup"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <Style x:Key="DefaultMenuItem" TargetType="{x:Type MenuItem}">
+            <Setter Property="Template" Value="{StaticResource MenuHeader}"/>
+            <Setter Property="HeaderTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock x:Name="txtHeader" FontSize="{Binding FontSize,RelativeSource={RelativeSource AncestorType={x:Type MenuItem},Mode=FindAncestor}}"
+                                   HorizontalAlignment="Stretch" Margin="3,1,5,1"
+                                   Text="{Binding Header,RelativeSource={RelativeSource AncestorType={x:Type MenuItem},Mode=FindAncestor}}" VerticalAlignment="Center"
+                                   Foreground="{Binding Foreground,RelativeSource={RelativeSource AncestorType={x:Type MenuItem},Mode=FindAncestor}}"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type Button}">
+            <Style.BasedOn>
+                <Style TargetType="{x:Type ButtonBase}">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="SnapsToDevicePixels" Value="True"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ButtonBase}">
+                                <Grid>
+                                    <mah:ClipBorder x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding mah:ControlsHelper.CornerRadius}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    <mah:ClipBorder x:Name="DisabledVisualElement" Background="{DynamicResource MahApps.Brushes.Control.Disabled}" CornerRadius="{TemplateBinding mah:ControlsHelper.CornerRadius}" IsHitTestVisible="False" Opacity="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    <mah:ContentControlEx x:Name="PART_ContentPresenter" ContentCharacterCasing="{Binding (mah:ControlsHelper.ContentCharacterCasing), RelativeSource={RelativeSource TemplatedParent}}" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" RecognizesAccessKey="{TemplateBinding mah:ControlsHelper.RecognizesAccessKey}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" TargetName="Border" Value="{DynamicResource MahApps.Brushes.Gray8}"/>
+                                        <Setter Property="BorderBrush" TargetName="Border" Value="{Binding (mah:ControlsHelper.MouseOverBorderBrush), Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Background" TargetName="Border" Value="{DynamicResource MahApps.Brushes.Gray7}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Upper"/>
+                    <Setter Property="mah:ControlsHelper.CornerRadius" Value="3"/>
+                    <Setter Property="mah:ControlsHelper.FocusBorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border.Focus}"/>
+                    <Setter Property="mah:ControlsHelper.FocusBorderThickness" Value="2"/>
+                    <Setter Property="mah:ControlsHelper.MouseOverBorderBrush" Value="{DynamicResource MahApps.Brushes.Button.Border.MouseOver}"/>
+                </Style>
+            </Style.BasedOn>
+        </Style>
+        <DataTemplate x:Key="FeatureItemTemplate" DataType="{x:Type featuresBar:FeatureItem}">
+            <Button Command="{Binding Main.OpenFeatureCommand, Source={StaticResource Locator}}" 
+                    CommandParameter="{Binding Feature}" Margin="5,0,0,0" >
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="{Binding Icon, TargetNullValue={StaticResource DefaultIcon}}" Width="25" Height="25" />
+                    <TextBlock Text="{Binding Feature}" FontSize="18" FontFamily="Segoe UI" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </DataTemplate>
+    </UserControl.Resources>
+    <materialDesign:Card Background="White" materialDesign:ShadowAssist.Darken="False" UniformCornerRadius="0">
+        <Grid Height="45">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="2"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <ItemsControl Height="35" ItemsSource="{Binding FavoriteList}" 
+                          ItemTemplate="{StaticResource FeatureItemTemplate}" Margin="5,0,5,0">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+            <!--Separator-->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Background="Silver" Height="25"/>
+            <ItemsControl Height="45" Grid.Column="2" Margin="5,0,5,0" ItemsSource="{Binding FeaturesCollections}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type featuresBar:FeaturesCollection}">
+                        <Menu DockPanel.Dock="Top" VerticalAlignment="Center">
+                            <MenuItem Style="{StaticResource DefaultMenuItem}" 
+                                      Header="{Binding Type}" FontSize="18" FontFamily="Segoe UI Semi" 
+                                      ItemsSource="{Binding Features}">
+                                <MenuItem.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type featuresBar:FeatureItem}">
+                                        <Button Command="{Binding Main.OpenFeatureCommand, Source={StaticResource Locator}}" 
+                                                CommandParameter="{Binding Feature}">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="{x:Type ButtonBase}">
+                                                    <Grid UseLayoutRounding="True" d:DesignUseLayoutRounding="True">
+                                                        <mah:ClipBorder x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding mah:ControlsHelper.CornerRadius}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" UseLayoutRounding="True" d:DesignUseLayoutRounding="True"/>
+                                                        <mah:ClipBorder x:Name="DisabledVisualElement" Background="{DynamicResource MahApps.Brushes.Control.Disabled}" CornerRadius="{TemplateBinding mah:ControlsHelper.CornerRadius}" IsHitTestVisible="False" Opacity="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" UseLayoutRounding="True" d:DesignUseLayoutRounding="True"/>
+                                                        <mah:ContentControlEx x:Name="PART_ContentPresenter" ContentCharacterCasing="{Binding (mah:ControlsHelper.ContentCharacterCasing), RelativeSource={RelativeSource TemplatedParent}}" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" RecognizesAccessKey="{TemplateBinding mah:ControlsHelper.RecognizesAccessKey}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" UseLayoutRounding="True" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" d:DesignUseLayoutRounding="True"/>
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="35"/>
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <Border Width="35"  xml:lang="zh-TW">
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Style.Triggers>
+                                                                <DataTrigger  xml:lang="zh-TW" Binding="{Binding Feature}" 
+                                                                              Value="{x:Static featuresBar:FeaturesEnum.訂單管理}">
+                                                                    <Setter Property="Padding" Value="0,0,10,0" />
+                                                                </DataTrigger>
+                                                                <DataTrigger  xml:lang="zh-TW" Binding="{Binding Feature}" 
+                                                                              Value="{x:Static featuresBar:FeaturesEnum.藥品管理}">
+                                                                    <Setter Property="Padding" Value="0,0,5,0"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <Image Source="{Binding Icon, TargetNullValue={StaticResource DefaultIcon}}" Width="25" Height="25"/>
+                                                </Border>
+                                                <TextBlock Grid.Column="1" Text="{Binding Feature}" FontSize="18" FontFamily="Segoe UI" Margin="10,0,0,0" VerticalAlignment="Center" TextAlignment="Justify"/>
+                                            </Grid>
+                                        </Button>
+                                    </DataTemplate>
+                                </MenuItem.ItemTemplate>
+                            </MenuItem>
+                        </Menu>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+    </materialDesign:Card>
+</UserControl>

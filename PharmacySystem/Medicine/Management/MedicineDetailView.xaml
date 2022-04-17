@@ -1,0 +1,139 @@
+﻿<UserControl x:Class="PharmacySystem.Medicine.Management.MedicineDetailView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PharmacySystem.View"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" Background="{StaticResource BaseBackground}">
+    <UserControl.Resources>
+        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="5"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid Width="1910" Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="300"/>
+        </Grid.ColumnDefinitions>
+        <Grid >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="120"/>
+                <RowDefinition Height="730"/>
+            </Grid.RowDefinitions>
+            <materialDesign:Card Grid.Column="0" Grid.Row="0" materialDesign:ShadowAssist.ShadowDepth="Depth3" UniformCornerRadius="10" Margin="0,0,10,0" >
+                <Grid Background="White">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="45"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
+                        <TextBlock Text="A000420100" FontSize="30" FontWeight="SemiBold" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="藥品名稱" FontSize="30" FontWeight="SemiBold" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                        <Border Background="DodgerBlue" Margin="0,0,10,0" Width="55"
+                                Height="30" VerticalAlignment="Center" CornerRadius="10">
+                            <TextBlock Text="糖衣錠" Foreground="White"  FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                        <Border Background="Red" Margin="0,0,10,0" Width="55"
+                            Height="30" VerticalAlignment="Center" CornerRadius="10">
+                            <TextBlock Text="管制一" Foreground="White"  FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                        <Border Background="OrangeRed" Margin="0,0,10,0" Width="55"
+                            Height="30" VerticalAlignment="Center" CornerRadius="10">
+                            <TextBlock Text="複方" Foreground="White"  FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+                    <TextBlock Grid.Row="1" Text="MedicineName" FontSize="30" FontWeight="SemiBold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    <TextBlock Grid.Row="2" Text="製造廠商" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock Text="生效日期：" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        <TextBlock Text="110/05/16" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        <TextBlock Text="~" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        <TextBlock Text="110/05/16" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" Margin="10,0,10,0"/>
+                    </StackPanel>
+                </Grid>
+            </materialDesign:Card>
+            <Grid Grid.Row="1" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <materialDesign:Card Grid.Column="0" Grid.Row="0" materialDesign:ShadowAssist.ShadowDepth="Depth3" UniformCornerRadius="10" Margin="0,10,10,0">
+                    <StackPanel Background="White" Margin="10">
+                        <TextBlock Text="成分" FontSize="18" FontWeight="SemiBold" Height="25" />
+                        <TextBlock Text="" FontSize="16" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Grid.Column="0" Grid.Row="1" materialDesign:ShadowAssist.ShadowDepth="Depth3" UniformCornerRadius="10" Margin="0,10,10,0">
+                    <StackPanel Background="White" Margin="10">
+                        <TextBlock Text="副作用" FontSize="18" FontWeight="SemiBold"/>
+                        <TextBlock Text="" FontSize="16" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Grid.Column="0" Grid.Row="2" materialDesign:ShadowAssist.ShadowDepth="Depth3" UniformCornerRadius="10" Margin="0,10,10,0">
+                    <StackPanel Background="White" Margin="10">
+                        <TextBlock Text="備註" FontSize="18" FontWeight="SemiBold"/>
+                        <TextBlock Text="" FontSize="16" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Grid.Column="1" Grid.Row="0" materialDesign:ShadowAssist.ShadowDepth="Depth3" UniformCornerRadius="10" Margin="0,10,10,0">
+                    <StackPanel Background="White" Margin="10">
+                        <TextBlock Text="批號" FontSize="18" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Grid.Column="1" Grid.Row="1" materialDesign:ShadowAssist.ShadowDepth="Depth3" UniformCornerRadius="10" Margin="0,10,10,0">
+                    <StackPanel Background="White" Margin="10">
+                        <TextBlock Text="合併品項" FontSize="18" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Grid.Column="1" Grid.Row="2" materialDesign:ShadowAssist.ShadowDepth="Depth3" UniformCornerRadius="10" Margin="0,10,10,0">
+                    <StackPanel Background="White" Margin="10">
+                        <TextBlock Text="使用量分析" FontSize="18" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </materialDesign:Card>
+            </Grid>
+        </Grid>
+        <Grid Grid.Column="1" Width="300">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <materialDesign:Card Grid.Row="0" materialDesign:ShadowAssist.ShadowDepth="Depth3" UniformCornerRadius="10" >
+                <StackPanel Background="White" Margin="10">
+                    <TextBlock Text="預定" FontSize="18" FontWeight="SemiBold"/>
+                    <ListBox Background="White">
+
+                    </ListBox>
+                </StackPanel>
+            </materialDesign:Card>
+            <materialDesign:Card Grid.Row="1" materialDesign:ShadowAssist.ShadowDepth="Depth3" UniformCornerRadius="10" Margin="0,10,0,0">
+                <Grid Background="White" Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="庫存紀錄" FontSize="18" FontWeight="SemiBold"/>
+                    <ListBox Grid.Row="1" Background="White">
+
+                    </ListBox>
+                </Grid>
+            </materialDesign:Card>
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Background="DodgerBlue"  Height="40" Content="復原" HorizontalAlignment="Right"
+                        Foreground="Snow" Width="100" FontSize="18" Margin="10,10,0,0" BorderThickness="0"
+                        Command="{Binding SavePatientDataCommand}" Cursor="Hand"/>
+                <Button Background="#FF14B458" Height="40" Content="存檔" HorizontalAlignment="Right"
+                        Foreground="Snow" Width="100" FontSize="18" Margin="10,10,0,0" BorderThickness="0"
+                        Command="{Binding SavePatientDataCommand}"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
